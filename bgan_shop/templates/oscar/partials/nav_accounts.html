@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static currency_filters %}
 
 <nav id="top_page" class="navbar navbar-expand-lg navbar-light bg-light accounts">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".account-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -7,25 +7,7 @@
     <div class="container">
 
         <div class="navbar-collapse account-collapse collapse">
-            {% block nav_account_languages %}
-            {% if LANGUAGES|length > 1 %}
-                <form id="language_selector" class="form-inline mb-0 mt-2 mt-lg-0" action="{% url 'set_language' %}" method="post">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ language_neutral_url_path }}" />
-                    <div class="form-group mb-0">
-                        <select name="language" class="form-control">
-                            {% get_language_info_list for LANGUAGES as languages %}
-                            {% for language in languages %}
-                                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE%} selected="selected"{% endif %}>
-                                    {{ language.name_local }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button class="btn btn-outline-secondary ml-2" type="submit" data-loading-text="{% trans 'Submitting...' %}">{% trans "Go" %}</button>
-                </form>
-                {% endif %}
-            {% endblock %}
+
             <ul class="navbar-nav ml-md-auto d-md-flex">
                 {% if user.is_authenticated %}
                 {% block nav_account_navbar_authenticated %}
@@ -71,3 +53,179 @@
         </div>
     </div>
 </nav>
+
+
+<header class="section-header">
+    <section class="header-main border-bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-2 col-lg-3 col-md-12">
+                    <a href="/" class="brand-wrap">
+                        <img class="logo" src="{% static 'oscar/img/logo.png' %}">
+                    </a> <!-- brand-wrap.// -->
+                </div>
+                <div class="col-xl-6 col-lg-5 col-md-6">
+                    {% include "oscar/partials/search.html" %}
+                </div> <!-- col.// -->
+                {% if user.is_authenticated %}
+                <div class="col-xl-4 col-lg-4 col-md-6">
+                    <div class="widgets-wrap float-md-right">
+                        <div class="widget-header mr-3">
+                            <a href="{% url 'customer:summary' %}" class="widget-view">
+                                <div class="icon-area">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <small class="text">{% trans "Account" %}</small>
+                            </a>
+                        </div>
+                        <div class="widget-header mr-3">
+                            <a href="{% url 'customer:notifications-inbox' %}" class="widget-view">
+                                <div class="icon-area">
+                                    <i class="fa fa-comment-dots"></i>
+                                    <span class="notify">{{ num_unread_notifications }}</span>
+                                </div>
+                                <small class="text"> {% trans "Messages" %} </small>
+                            </a>
+                        </div>
+                        <div class="widget-header mr-3">
+                            <a href="{% url 'customer:order-list' %}" class="widget-view">
+                                <div class="icon-area">
+                                    <i class="fa fa-store"></i>
+                                </div>
+                                <small class="text"> {% trans 'Orders' %} </small>
+                            </a>
+                        </div>
+                        <div class="widget-header">
+                            <a href="{% url 'customer:logout' %}" class="widget-view">
+                                <div class="icon-area">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </div>
+                                <small class="text">{% trans "Logout" %}</small>
+                            </a>
+                        </div>
+                        
+                    </div> <!-- widgets-wrap.// -->
+                </div> <!-- col.// -->
+                {% else %}
+                <div class="mx-auto col-xl-4 col-lg-4 col-md-6">
+                    <div class="widgets-wrap float-md-right">
+                        <div class="widget-header mr-3">
+                            <a href="{% url 'customer:login' %}" class="widget-view">
+                                <div class="icon-area">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </div>
+                                <small class="text">{% trans "Login or register" %}</small>
+                            </a>
+                        </div>                        
+                    </div> <!-- widgets-wrap.// -->
+                </div> 
+                {% endif %}
+            </div> <!-- row.// -->
+        </div> <!-- container.// -->
+    </section> <!-- header-main .// -->
+    
+    <nav class="navbar navbar-main navbar-expand-lg border-bottom">
+      <div class="container-fluid">
+    
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_nav" aria-controls="main_nav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        {% block navbar_basket %}
+        <a class="btn btn-secondary float-right btn-cart ml-auto d-inline-block d-lg-none" href="{% url 'basket:summary' %}">
+            <i class="fas fa-shopping-cart"></i>
+            {% trans "Basket" %}
+            {% if not request.basket.is_empty %}
+                {% if request.basket.is_tax_known %}
+                    {% blocktrans with total=request.basket.total_incl_tax|currency:request.basket.currency %}
+                        Total: {{ total }}
+                    {% endblocktrans %}
+                {% else %}
+                    {% blocktrans with total=request.basket.total_excl_tax|currency:request.basket.currency %}
+                        Total: {{ total }}
+                    {% endblocktrans %}
+                {% endif %}
+            {% endif %}
+        </a>
+        {% endblock %}
+        <div class="collapse navbar-collapse" id="main_nav">
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-bars text-muted mr-2"></i> Demo pages </a>
+                <div class="dropdown-menu dropdown-large">
+                    <nav class="row">
+                        <div class="col-6">
+                            <a href="page-index-1.html">Home page 1</a>
+                            <a href="page-index-2.html">Home page 2</a>
+                            <a href="page-category.html">All category</a>
+                            <a href="page-listing-large.html">Listing list</a>
+                            <a href="page-listing-grid.html">Listing grid</a>
+                            <a href="page-shopping-cart.html">Shopping cart</a>
+                            <a href="page-detail-product.html">Product detail</a>
+                            <a href="page-content.html">Page content</a>
+                            <a href="page-user-login.html">Page login</a>
+                            <a href="page-user-register.html">Page register</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="page-profile-main.html">Profile main</a>
+                            <a href="page-profile-orders.html">Profile orders</a>
+                            <a href="page-profile-seller.html">Profile seller</a>
+                            <a href="page-profile-wishlist.html">Profile wishlist</a>
+                            <a href="page-profile-setting.html">Profile setting</a>
+                            <a href="page-profile-address.html">Profile address</a>
+                            <a href="page-components.html" target="_blank">More components</a>
+                        </div>
+                    </nav> <!--  row end .// -->
+                </div> <!--  dropdown-menu dropdown-large end.// -->
+            </li>
+              <li class="nav-item">
+               <a class="nav-link" href="#">Ready to ship</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Trade shows</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Sell with us</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ml-md-auto">
+            {% block mini_basket %}{% include "oscar/partials/mini_basket.html" %}{% endblock %}
+              <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="http://example.com" data-toggle="dropdown">English</a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item" href="#">Russian</a>
+                  <a class="dropdown-item" href="#">French</a>
+                  <a class="dropdown-item" href="#">Spanish</a>
+                  <a class="dropdown-item" href="#">Chinese</a>
+                </div>
+              </li> -->
+              <li class="nav-item mr-5">
+                {% block nav_account_languages %}
+                {% if LANGUAGES|length > 1 %}
+                    <form id="language_selector" class="form-inline mb-0 mt-2 mt-lg-0" action="{% url 'set_language' %}" method="post">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ language_neutral_url_path }}" />
+                        <div class="form-group mb-0">
+                            <select onchange="this.form.submit()" name="language" class="form-control">
+                                {% get_language_info_list for LANGUAGES as languages %}
+                                {% for language in languages %}
+                                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE%} selected="selected"{% endif %}>
+                                        {{ language.name_local }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- <button class="btn btn-outline-secondary ml-2" type="submit" data-loading-text="{% trans 'Submitting...' %}">{% trans "Go" %}</button> -->
+                    </form>
+                    {% endif %}
+                {% endblock %}
+              </li>
+
+           </ul>
+        </div> <!-- collapse .// -->
+      </div> <!-- container .// -->
+    </nav>
+    </header> <!-- section-header.// -->
+    

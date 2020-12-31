@@ -3,7 +3,6 @@ Base settings to build other settings files upon.
 """
 from pathlib import Path
 from oscar.defaults import *
-import os
 
 import environ
 
@@ -197,14 +196,12 @@ MEDIA_URL = "/media/"
 # TEMPLATES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates
-location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', x)
-
 TEMPLATES = [
     {
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         # https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
-        "DIRS": [location('templates'),],
+        "DIRS": [str(APPS_DIR / "templates")],
         "OPTIONS": {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
             # https://docs.djangoproject.com/en/dev/ref/templates/api/#loader-types
