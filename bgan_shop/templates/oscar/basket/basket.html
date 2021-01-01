@@ -7,11 +7,15 @@
 
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{% trans "Basket" %}</li>
-        </ol>
-    </nav>
+
+    <div class="card my-3">
+        <div class="card-body">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{% trans "Basket" %}</li>
+            </ol>
+        </div> <!-- card-body .// -->
+    </div> <!-- card.// -->
 {% endblock %}
 
 {# Hide mini-basket so we don't have two baskets to keep in sync #}
@@ -19,11 +23,13 @@
 
 {% block headertext %}
     {% trans "Basket" %}
+
 {% endblock %}
 
 {% block content %}
     {# Use a partial template so that AJAX can be used to re-render basket #}
     {% include 'oscar/basket/partials/basket_content.html' %}
+
 {% endblock content %}
 
 {% block onbodyload %}

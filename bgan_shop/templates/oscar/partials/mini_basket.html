@@ -10,7 +10,9 @@
     {% endif %} -->
 
     <div class="btn-group">
-      <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='{% url 'basket:summary' %}';"><i class="fa fa-shopping-cart"></i></button>
+      <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='{% url 'basket:summary' %}';">
+        <i class="d-inline fa fa-shopping-cart"></i>
+      </button>
       <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="sr-only">Toggle Dropdown</span>
       </button>

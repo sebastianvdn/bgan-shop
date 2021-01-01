@@ -2,21 +2,7 @@
 {% load static %}
 
 {% block styles %}
-
-    <!-- Twitter Bootstrap -->
-    <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
-
-    <!-- Font awesome 5 -->
-    <link href="{% static 'fonts/fontawesome/css/all.min.css' %}" type="text/css" rel="stylesheet">
-
-    <!-- custom style -->
-    <link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
-    <link href="{% static 'css/responsive.css' %}" rel="stylesheet" type="text/css" />
-
-    <!-- custom javascript -->
-    <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
-    <script src="{% static 'oscar/js/oscar/ui.js' %}" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "oscar/css/styles.css" %}" />
 {% endblock %}
 
 {% block layout %}
@@ -24,6 +10,18 @@
     {% include "oscar/partials/nav_accounts.html" %}
 
     {# Site logo/title, mini-basket, browse dropdown and searchbox #}
+    <header class="header container">
+        <div class="page_inner">
+            <div class="row justify-content-between">
+                {% include "oscar/partials/brand.html" %}
+                {# Mini-basket wrapped in a block so some templates can now display it #}
+                {% block mini_basket %}{% include "oscar/partials/mini_basket.html" %}{% endblock %}
+            </div>
+        </div>
+        {% block navigation %}
+            {% include "oscar/partials/nav_primary.html" %}
+        {% endblock %}
+    </header>
 
     {# Main content of page - other layout templates may override this block #}
     {% block content_wrapper %}
@@ -53,7 +51,10 @@
 {# Local scripts #}
 {% block scripts %}
     {{ block.super }}
-
+    <!-- Twitter Bootstrap -->
+    <script src="{% static "oscar/js/bootstrap4/bootstrap.bundle.js" %}"></script>
+    <!-- Oscar -->
+    <script src="{% static "oscar/js/oscar/ui.js" %}"></script>
 {% endblock %}
 
 {% block extrascripts %}

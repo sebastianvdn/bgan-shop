@@ -17,26 +17,29 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
-            {% with category=product.get_categories.first %}
-                {% for c in category.get_ancestors_and_self %}
-                    <li class="breadcrumb-item"><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
-                {% endfor %}
-                <li class="breadcrumb-item active" aria-current="page">{{ product.get_title }}</li>
 
-                {% get_back_button as backbutton %}
-                    {% if backbutton %}
-                        <li class="float-right">
-                            <a href="{{ backbutton.url }}">
-                                <i class="fas fa-arrow-left"></i> {{ backbutton.title }}
-                            </a>
-                        </li>
-                    {% endif %}
-            {% endwith %}
-        </ol>
-    </nav>
+    <div class="card my-3">
+        <div class="card-body">
+            <ol class="breadcrumb float-left">
+                <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                {% with category=product.get_categories.first %}
+                    {% for c in category.get_ancestors_and_self %}
+                        <li class="breadcrumb-item"><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+                    {% endfor %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.get_title }}</li>
+    
+                    {% get_back_button as backbutton %}
+                        {% if backbutton %}
+                            <li class="float-right">
+                                <a href="{{ backbutton.url }}">
+                                    <i class="fas fa-arrow-left"></i> {{ backbutton.title }}
+                                </a>
+                            </li>
+                        {% endif %}
+                {% endwith %}
+            </ol>
+        </div> <!-- card-body .// -->
+    </div> <!-- card.// -->
 {% endblock %}
 
 {% block header %}

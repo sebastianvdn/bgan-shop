@@ -1,58 +1,8 @@
 {% load i18n static currency_filters %}
 
-<nav id="top_page" class="navbar navbar-expand-lg navbar-light bg-light accounts">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".account-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="container">
+<!-- <nav id="top_page" class="navbar navbar-expand-lg navbar-light bg-light accounts">
 
-        <div class="navbar-collapse account-collapse collapse">
-
-            <ul class="navbar-nav ml-md-auto d-md-flex">
-                {% if user.is_authenticated %}
-                {% block nav_account_navbar_authenticated %}
-                    <li class="nav-item mr-2">
-                        {% if num_unread_notifications > 0 %}
-                            {# If user has new notifications - we change account link to go to inbox #}
-                            <a href="{% url 'customer:notifications-inbox' %}" class="nav-link mt-2 mt-lg-0">
-                                <i class="far fa-user mr-2"></i>
-                                {% trans "Account" %}
-                                <span class="badge badge-warning">{{ num_unread_notifications }}</span>
-                            </a>
-                        {% else %}
-                            <a href="{% url 'customer:summary' %}" class="nav-link mt-2 mt-lg-0">
-                                <i class="far fa-user mr-2"></i>
-                                {% trans "Account" %}
-                            </a>
-                        {% endif %}
-                    </li>
-                    {% if user.is_staff or perms.partner.dashboard_access %}
-                        <li class="nav-item mr-2">
-                            <a href="{% url 'dashboard:index' %}" class="nav-link">
-                                <i class="fas fa-list-ul mr-2"></i>
-                                {% trans "Dashboard" %}
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item mr-2">
-                        <a id="logout_link" href="{% url 'customer:logout' %}" class="nav-link">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            {% trans "Logout" %}
-                        </a>
-                    </li>
-                {% endblock %}
-                {% else %}
-                    <li class="nav-item mr-2">
-                        <a id="login_link" href="{% url 'customer:login' %}" class="nav-link">
-                            <i class="fas fa-sign-in-alt mr-2"></i>
-                            {% trans "Login or register" %}
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</nav>
+</nav> -->
 
 
 <header class="section-header">
@@ -70,6 +20,16 @@
                 {% if user.is_authenticated %}
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="widgets-wrap float-md-right">
+                        {% if user.is_staff or perms.partner.dashboard_access %}
+                        <div class="widget-header mr-3">
+                            <a href="{% url 'dashboard:index' %}" class="widget-view">
+                                <div class="icon-area">
+                                    <i class="fas fa-list-ul mr-2"></i>
+                                </div>
+                                <small class="text">{% trans "Dashboard" %}</small>
+                            </a>
+                        </div>
+                        {% endif %}
                         <div class="widget-header mr-3">
                             <a href="{% url 'customer:summary' %}" class="widget-view">
                                 <div class="icon-area">
@@ -131,21 +91,24 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         {% block navbar_basket %}
-        <a class="btn btn-secondary float-right btn-cart ml-auto d-inline-block d-lg-none" href="{% url 'basket:summary' %}">
-            <i class="fas fa-shopping-cart"></i>
-            {% trans "Basket" %}
-            {% if not request.basket.is_empty %}
-                {% if request.basket.is_tax_known %}
-                    {% blocktrans with total=request.basket.total_incl_tax|currency:request.basket.currency %}
-                        Total: {{ total }}
-                    {% endblocktrans %}
-                {% else %}
-                    {% blocktrans with total=request.basket.total_excl_tax|currency:request.basket.currency %}
-                        Total: {{ total }}
-                    {% endblocktrans %}
+        <div class="{% if 'basket' in request.path %}d-none{% endif %}">
+            <a class="btn btn-secondary float-right btn-cart ml-auto d-inline-block d-lg-none" href="{% url 'basket:summary' %}">
+                <i class="fas fa-shopping-cart"></i>
+                {% trans "Basket" %}
+                {% if not request.basket.is_empty %}
+                    {% if request.basket.is_tax_known %}
+                        {% blocktrans with total=request.basket.total_incl_tax|currency:request.basket.currency %}
+                            Total: {{ total }}
+                        {% endblocktrans %}
+                    {% else %}
+                        {% blocktrans with total=request.basket.total_excl_tax|currency:request.basket.currency %}
+                            Total: {{ total }}
+                        {% endblocktrans %}
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-        </a>
+            </a>
+        </div>
+
         {% endblock %}
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav">
@@ -191,7 +154,10 @@
             </li>
           </ul>
           <ul class="navbar-nav ml-md-auto">
-            {% block mini_basket %}{% include "oscar/partials/mini_basket.html" %}{% endblock %}
+            <div class="{% if 'basket' in request.path %}d-none{% endif %}">
+                {% block mini_basket %}{% include "oscar/partials/mini_basket.html" %}{% endblock %}
+
+            </div>
               <!-- <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="http://example.com" data-toggle="dropdown">English</a>
                 <div class="dropdown-menu dropdown-menu-right">

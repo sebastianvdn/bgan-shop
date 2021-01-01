@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-    {{ category.get_meta_title }} | {{ block.super }}
+    {{ category.name }} | {{ block.super }}
 {% endblock %}
 
 {% block description %}
@@ -13,33 +13,54 @@
 {% block header%}
     <div class="page-header">
         {% if user.is_staff %}
-            <a class="float-right d-none d-md-block" href="{% url 'dashboard:catalogue-category-update' pk=category.id %}">
+            <a class="d-none d-md-block" href="{% url 'dashboard:catalogue-category-update' pk=category.id %}">
               <small><i class="fas fa-pencil-alt"></i> {% trans "Edit this category" %}</small></a>
         {% endif %}
-        <h1>{% block headertext %}{{ category.name }}{% endblock %}</h1>
     </div>
+
 {% endblock %}
 
 {% block breadcrumbs %}
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
-            {% for category in category.get_ancestors %}
-                <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
-            {% endfor %}
-            <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
-        </ol>
-    </nav>
+    <div class="card my-3">
+        <div class="card-body">
+            <ol class="breadcrumb float-left">
+                <li class="breadcrumb-item"><a href="{{ homepage_url }}">{% trans "Home" %}</a></li>
+                {% for category in category.get_ancestors %}
+                    <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+                {% endfor %}
+                <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+            </ol>
+        </div> <!-- card-body .// -->
+    </div> <!-- card.// -->
 {% endblock breadcrumbs %}
 
 {% block content %}
     {% if category.description %}
-        <div class="row">
-            <div class="col-sm-9"><p>{{ category.description|safe }}</p></div>
-            {% if category.image %}
-                <div class="col-sm-3"><img src="{{ category.image.url }}" alt="{{ category.name }}" class="img-fluid" /></div>
-            {% endif %}
-        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-2 d-none d-md-block">
+                <!-- ============================ COMPONENT BANNER 8  ================================= -->
+                <div class="card-banner overlay-gradient" style="min-height:230px; background-image: url('../images/posts/3.jpg');">
+                <div class="card-img-overlay text-white">
+                    <h5 class="card-title">Best products</h5>
+                    <p class="card-text">No matter how far along you are in your sophistication as an amateur astronomer, there is always one.</p>
+                </div>
+                </div>
+                <!-- ============================ COMPONENT BANNER 8  END .// ================================= -->
+            </div> <!-- col.// -->
+            <div class="col-md-10">
+                <!-- ============================ COMPONENT BANNER 7 ================================= -->
+                <div class="card-banner overlay-gradient" style="min-height:230px; {% if category.image %} background-image: url('{{ category.image.url }}');{% endif %}">
+                <div class="card-img-overlay white">
+                    <h3 class="card-title">{{ category.name }}</h3>
+                    <p class="card-text" style="max-width: 400px">{{ category.description|safe }}</p>
+                    <!-- <a href="" class="btn btn-warning">Learn more</a> -->
+                </div>
+                </div>
+                <!-- ============================ COMPONENT BANNER 7  END .// =========================== -->
+            </div> <!-- col.// -->
+
+    </div> <!-- row.// -->
     {% endif %}
     {{ block.super }}
 {% endblock %}

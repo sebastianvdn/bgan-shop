@@ -1,24 +1,28 @@
-{% load reviews_tags %}
+{% load reviews_tags static humanize %}
 {% load i18n %}
-
 {% if product.rating != None %}
-    <p class="star-rating {{ product.rating|as_stars }}">
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
-        <i class="fas fa-star"></i>
 
-        <small><a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.id %}">
-                {% blocktrans count product.num_approved_reviews as num_reviews %}
-                    {{ num_reviews }} customer review
-                {% plural %}
-                    {{ num_reviews }} customer reviews
-                {% endblocktrans %}
-        </a></small>
-        &nbsp;
-{% else %}
-    <p>
+
+<div class="rating-wrap">
+    <ul class="rating-stars stars-lg">
+        <li style="width:{% widthratio product.rating 5 100 %}%" class="stars-active">
+            <img src="{% static '/img/icons/stars-active.svg' %}" alt="">
+        </li>
+        <li>
+            <img src="{% static '/img/icons/starts-disable.svg' %}" alt="">
+        </li>
+    </ul>
+    <strong class="label-rating text-lg"> {{product.rating|floatformat:"1"|intcomma}} <span class="text-muted">|
+        <a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.id %}">
+        {% blocktrans count product.num_approved_reviews as num_reviews %}
+            {{ num_reviews }} customer review
+        {% plural %}
+            {{ num_reviews }} customer reviews
+        {% endblocktrans %}
+        </a>
+    </span></strong>
+</div>
+<p>
 {% endif %}
 
 {% if product|is_review_permitted:user %}
@@ -27,3 +31,4 @@
     </a>
 {% endif %}
 </p>
+
