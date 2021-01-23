@@ -15,9 +15,9 @@
     <strong class="label-rating text-lg"> {{product.rating|floatformat:"1"|intcomma}} <span class="text-muted">|
         <a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.id %}">
         {% blocktrans count product.num_approved_reviews as num_reviews %}
-            {{ num_reviews }} customer review
+            {{ num_reviews }} review
         {% plural %}
-            {{ num_reviews }} customer reviews
+            {{ num_reviews }} reviews
         {% endblocktrans %}
         </a>
     </span></strong>

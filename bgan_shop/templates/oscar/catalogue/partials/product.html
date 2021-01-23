@@ -4,21 +4,24 @@
 {% load reviews_tags %}
 {% load purchase_info_tags %}
 {% load currency_filters %}
+{% load static %}
 
 {% block product %}
-<figure class="card card-product-grid">
-    {% block product_image %}
-    <div class="img-wrap">
-        {% with image=product.primary_image %}
-        {% oscar_thumbnail image.original "x155" upscale=False as thumb %}
-        <span class="badge badge-danger"> NEW </span>
-        <a href="{{ product.get_absolute_url }}">
-            <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
-        </a>
-        {% endwith %}
-    </div> <!-- img-wrap.// -->
-    {% endblock %}
-    <figcaption class="info-wrap">
+    <figure class="card card-product-grid">
+        <div class="img-wrap"> 
+            {% block product_image %}
+            <div class="img-wrap">
+                {% with image=product.primary_image %}
+                {% oscar_thumbnail image.original "x155" upscale=False as thumb %}
+                <span class="badge badge-danger"> NEW </span>
+                <a href="{{ product.get_absolute_url }}">
+                    <img src="{{ thumb.url }}" alt="{{ product.get_title }}">
+                </a>
+                {% endwith %}
+            </div> <!-- img-wrap.// -->
+            {% endblock %}
+        </div> <!-- img-wrap.// -->
+        <figcaption class="info-wrap">
             <a href="{{ product.get_absolute_url }}" title="{{ product.get_title }}" class="title mb-2">{{ product.get_title|truncatewords:4 }}</a>
             <div class="price-wrap">
                 {% purchase_info_for_product request product as session %}
@@ -36,38 +39,27 @@
                 <!-- <span class="price">$32.00-$40.00</span>  -->
                 <!-- <small class="text-muted">/per item</small> -->
             </div> <!-- price-wrap.// -->
-            <!-- <p class="text-muted ">Guangzhou Yichuang Electronic Co</p> -->
-            <a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.id %}">
-            <ul class="rating-stars">
-                <li style="width:{% widthratio product.rating 5 100 %}%" class="stars-active"> 
-                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                </li>
-                <li>
-                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
-                </li>
-            </ul>
-            <small class="text-muted">
-                {% blocktrans count product.num_approved_reviews as num_reviews %}
-                    {{ num_reviews }}
-                {% plural %}
-                    {{ num_reviews }}
-                {% endblocktrans %}
-            </small>
-            </a>
-            <hr>
-            
-            <p class="mb-3">
+               
+                <hr>
+                <a href="{% url 'catalogue:reviews-list' product_slug=product.slug product_pk=product.id %}">
+                <ul class="rating-stars">
+                    <li style="width:{% widthratio product.rating 5 100 %}%"" class="stars-active">
+                        <img src="{% static '/icons/stars-active.svg' %}" alt="">
+                    </li>
+                    <li>
+                        <img src="{% static '/icons/starts-disable.svg' %}" alt="">
+                    </li>
+                </ul>
+                <small class="text-muted">
+                    {% blocktrans count product.num_approved_reviews as num_reviews %}
+                        {{ num_reviews }}
+                    {% plural %}
+                        {{ num_reviews }}
+                    {% endblocktrans %}
+                </small>
+                </a>
                 {% include "oscar/catalogue/partials/stock_record.html" %}
-                <!-- <span class="tag"> 2 Years </span> 
-                <span class="tag"> 23 reviews </span>
-                <span class="tag"> Japan </span> -->
-
-            </p>
-        
-            <!-- <a href="#" class="btn btn-outline-primary"> <i class="fa fa-envelope"></i> Contact supplier </a>	 -->
-            {% if not product.is_parent and not product.has_options %}
-            {% include "oscar/catalogue/partials/add_to_basket_form_compact.html" %}
-            {% endif %}
-    </figcaption>
-</figure>
+                <a href="{{ product.get_absolute_url }}" class="btn btn-block btn-outline-primary mt-3"> <i class="fa fa-eye"></i> {% trans 'View product' %}</a>	
+            </figcaption>
+    </figure>
 {% endblock %}

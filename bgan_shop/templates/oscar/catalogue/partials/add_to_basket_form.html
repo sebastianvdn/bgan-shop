@@ -10,7 +10,7 @@
     <form id="add_to_basket_form" action="{% url 'basket:add' pk=product.pk  %}" method="post" class="add-to-basket mb-0">
         {% csrf_token %}
         {% include "oscar/partials/form_fields.html" with form=basket_form %}
-        <button type="submit" class="btn btn-lg btn-primary w-100" value="{% trans "Add to basket" %}" data-loading-text="{% trans 'Adding...' %}">{% trans "Add to basket" %}</button>
+        <button type="submit" class="btn btn-block btn-primary d-inline" value="{% trans "Add to basket" %}" data-loading-text="{% trans 'Adding...' %}"><i class="fas fa-cart-plus"></i> {% trans "Add to basket" %}</button>
     </form>
     {% iffeature "wishlists" %}
         {% include "oscar/catalogue/partials/add_to_wishlist.html" %}
@@ -23,7 +23,7 @@
             {% csrf_token %}
             <p>{% trans "You can get an email alert when this product is back in stock." %}</p>
             {% include "oscar/partials/form_fields.html" with form=alert_form %}
-            <button type="submit" class="btn btn-lg btn-info w-100" data-loading-text="{% trans 'Submitting...' %}">{% trans "Notify me" %}</button>
+            <button type="submit" class="btn btn-block btn-info" data-loading-text="{% trans 'Submitting...' %}">{% trans "Notify me" %}</button>
         </form>
     {% endif %}
     {% iffeature "wishlists" %}

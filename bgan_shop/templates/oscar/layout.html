@@ -2,21 +2,32 @@
 {% load static %}
 
 {% block styles %}
-
-    <!-- Twitter Bootstrap -->
-    <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+    <!-- Bootstrap4 files-->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
 
     <!-- Font awesome 5 -->
     <link href="{% static 'fonts/fontawesome/css/all.min.css' %}" type="text/css" rel="stylesheet">
 
-    <!-- custom style -->
+
+    <!-- plugin: slickslider -->
+    <link href="{% static 'plugins/slickslider/slick.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'plugins/slickslider/slick-theme.css' %}" rel="stylesheet" type="text/css" />
+    <script src="{% static 'plugins/slickslider/slick.min.js' %}"></script>
+
+    <!-- plugin: owl carousel 
+    <link href="plugins/owlcarousel/assets/owl.carousel.css" rel="stylesheet">
+    <link href="plugins/owlcarousel/assets/owl.theme.default.css" rel="stylesheet">
+    <script src="plugins/owlcarousel/owl.carousel.min.js"></script> -->
+
+    <!-- ui style -->
     <link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
     <link href="{% static 'css/responsive.css' %}" rel="stylesheet" type="text/css" />
 
-    <!-- custom javascript -->
+    <!-- ui javascript -->
     <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
     <script src="{% static 'oscar/js/oscar/ui.js' %}" type="text/javascript"></script>
+
 {% endblock %}
 
 {% block layout %}
@@ -46,7 +57,7 @@
             </div>
         </div>
     {% endblock %}
-
+    {% block stretch %}{% endblock stretch %}
     {% include "oscar/partials/footer.html" %}
 {% endblock %}
 

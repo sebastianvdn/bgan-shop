@@ -323,3 +323,5 @@ OSCAR_ORDER_STATUS_PIPELINE = {
     'Being processed': ('Processed', 'Cancelled',),
     'Cancelled': (),
 }
+OSCAR_DEFAULT_CURRENCY = "EUR"
+OSCAR_PRODUCTS_PER_PAGE = 20

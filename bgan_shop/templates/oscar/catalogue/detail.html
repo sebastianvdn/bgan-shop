@@ -11,6 +11,9 @@
 {% block title %}
     {{ product.get_meta_title }} | {{ block.super }}
 {% endblock %}
+{% block extrahead %}
+
+{% endblock %}
 
 {% block description %}
     {{ product.get_meta_description }}
@@ -52,110 +55,116 @@
     <div class="row">
 
         {% block product_gallery %}
-        <div class="col-sm-6">
+        <div class="col-md-6">
             {% include "oscar/catalogue/partials/gallery.html" %}
+            {% block product_description %}
+            {% if product.description %}
+            <div id="product_description " class="sub-header my-3">
+                <h3>{% trans "Product Description" %}</h3>
+            </div>
+            {{ product.description|safe }}
+            {% endif %}
+            {% endblock %}
         </div>
         {% endblock %}
 
         {% block product_main %}
-        <div class="col-sm-6 product_main">
-            {% comment %}
-                This is a bit clunky here.  Better to have some kind of JS-driven dashboard menu that
-                pops out when clicked.  A bit like the Django-Debug-Toolbar button
-            {% endcomment %}
-            {% if user.is_staff %}
-                <a class="float-right d-none d-md-block" href="{% url 'dashboard:catalogue-product' pk=product.id %}">
-                    <small><i class="fas fa-pencil-alt"></i> {% trans "Edit this product" %}</small>
-                </a>
-            {% endif %}
-            <h1>{{ product.get_title }}</h1>
+        <div class="col-md-6 product_main">
+            <article class="product-info-aside">
 
-            {% block product_stock_record %}
-                {% include "oscar/catalogue/partials/stock_record.html" with verbose=1 %}
-            {% endblock %}
+                <h2 class="title mt-3">{{ product.get_title }}</h2>
+                
+                <div class="rating-wrap my-3">
+                    {% iffeature "reviews" %}
+                        {% include "oscar/catalogue/reviews/partials/review_stars.html" %}
+                    {% endiffeature %}
+                    {% comment %}
+                        This is a bit clunky here.  Better to have some kind of JS-driven dashboard menu that
+                        pops out when clicked.  A bit like the Django-Debug-Toolbar button
+                    {% endcomment %}
+                    {% if user.is_staff %}
+                        <a class="float-right d-none d-md-block" href="{% url 'dashboard:catalogue-product' pk=product.id %}">
+                            <small><i class="fas fa-pencil-alt"></i> {% trans "Edit this product" %}</small>
+                        </a>
+                    {% endif %}
+                </div> <!-- rating-wrap.// -->
+                    {% block product_basket_form %}
+                        {% include "oscar/catalogue/partials/add_to_basket_form.html" %}
+                    {% endblock %}
+                <!-- <div class="mb-3"> 
+                    <var class="price h6">USD 465,00</var> 
+                    <span class="text-muted">USD 562.65 incl. VAT</span> 
+                </div> price-detail-wrap .// -->
 
-            {% iffeature "reviews" %}
-                {% include "oscar/catalogue/reviews/partials/review_stars.html" %}
-            {% endiffeature %}
 
-            <hr/>
-
-            {% if not product.is_parent %}
-                {% block product_basket_form %}
-                    {% include "oscar/catalogue/partials/add_to_basket_form.html" %}
-                {% endblock %}
-            {% else %}
-                {% block variants %}
-                    <h2>{% trans 'Variants:' %}</h2>
-                    {% for child in product.children.public %}
-                        {% purchase_info_for_product request child as child_session %}
-                        {% if child_session.availability.is_available_to_buy %}
-                            <a href="{{ child.get_absolute_url }}">{{ child.get_title }}</a><br>
+                    
+                {% block product_info %}
+                <div class="sub-header">
+                    <h3>{% trans "Product Information" %}</h3>
+                </div>
+                <table class="table table-striped">
+                    {% if product.upc %}
+                    <tr>
+                        <th>{% trans "UPC" %}</th><td>{{ product.upc }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>{% trans "Product Type" %}</th><td>{{ product.get_product_class.name }}</td>
+                    </tr>
+            
+                    {% purchase_info_for_product request product as session %}
+                    {% if session.price.exists %}
+                        <tr>
+                            <th>{% trans "Price (excl. tax)" %}</th><td>{{ session.price.excl_tax|currency:session.price.currency }}</td>
+                        </tr>
+                        {% if session.price.is_tax_known %}
+                            <tr>
+                                <th>{% trans "Price (incl. tax)" %}</th><td>{{ session.price.incl_tax|currency:session.price.currency }}</td>
+                            </tr>
+                            <tr>
+                                <th>{% trans "Tax" %}</th><td>{{ session.price.tax|currency:session.price.currency }}</td>
+                            </tr>
                         {% endif %}
+                        <tr>
+                            <th>{% trans "Availability" %}</th>
+                            <td>{{ session.availability.message }}</td>
+                        </tr>
+                    {% endif %}
+                    {% for av in product.get_attribute_values %}
+                        <tr>
+                            <th>{{ av.attribute.name }}</th>
+                            <td>{{ av.value_as_html }}</td>
+                        </tr>
                     {% endfor %}
+                    {% iffeature "reviews" %}
+                        <tr>
+                            <th>{% trans "Number of reviews" %}</th>
+                            <td>{{ product.num_approved_reviews }}</td>
+                        </tr>
+                    {% endiffeature %}
+                </table>
                 {% endblock %}
-            {% endif %}
+
+                </dl>              
+                </article>
         </div><!-- /col-sm-6 -->
         {% endblock %}
 
     </div><!-- /row -->
-
-    {% block product_description %}
-        {% if product.description %}
-        <div id="product_description" class="sub-header">
-            <h2>{% trans "Product Description" %}</h2>
-        </div>
-        <p>{{ product.description|safe }}</p>
+    {% with recommended_products=product.sorted_recommended_products|slice:":6" %}
+        {% if recommended_products %}
+            <div class="sub-header">
+                <h2>{% trans "Recommended items" %}</h2>
+            </div>
+            <ul class="row list-unstyled mx-0">
+                {% for product in recommended_products %}
+                <li class="col-sm-4 col-md-3 col-lg-3">
+                    {% render_product product %}
+                </li>
+                {% endfor %}
+            </ul>
         {% endif %}
-    {% endblock %}
-
-    {% block product_info %}
-    <div class="sub-header">
-        <h2>{% trans "Product Information" %}</h2>
-    </div>
-    <table class="table table-striped">
-        {% if product.upc %}
-        <tr>
-            <th>{% trans "UPC" %}</th><td>{{ product.upc }}</td>
-        </tr>
-        {% endif %}
-        <tr>
-            <th>{% trans "Product Type" %}</th><td>{{ product.get_product_class.name }}</td>
-        </tr>
-
-        {% purchase_info_for_product request product as session %}
-        {% if session.price.exists %}
-            <tr>
-                <th>{% trans "Price (excl. tax)" %}</th><td>{{ session.price.excl_tax|currency:session.price.currency }}</td>
-            </tr>
-            {% if session.price.is_tax_known %}
-                <tr>
-                    <th>{% trans "Price (incl. tax)" %}</th><td>{{ session.price.incl_tax|currency:session.price.currency }}</td>
-                </tr>
-                <tr>
-                    <th>{% trans "Tax" %}</th><td>{{ session.price.tax|currency:session.price.currency }}</td>
-                </tr>
-            {% endif %}
-            <tr>
-                <th>{% trans "Availability" %}</th>
-                <td>{{ session.availability.message }}</td>
-            </tr>
-        {% endif %}
-        {% for av in product.get_attribute_values %}
-            <tr>
-                <th>{{ av.attribute.name }}</th>
-                <td>{{ av.value_as_html }}</td>
-            </tr>
-        {% endfor %}
-        {% iffeature "reviews" %}
-            <tr>
-                <th>{% trans "Number of reviews" %}</th>
-                <td>{{ product.num_approved_reviews }}</td>
-            </tr>
-        {% endiffeature %}
-    </table>
-    {% endblock %}
-
+    {% endwith %}
     {% iffeature "reviews" %}
         {% block product_review %}
         <section>
@@ -190,26 +199,12 @@
         {% endblock product_review %}
     {% endiffeature %}
 
-    {% with recommended_products=product.sorted_recommended_products|slice:":6" %}
-        {% if recommended_products %}
-            <div class="sub-header">
-                <h2>{% trans "Recommended items" %}</h2>
-            </div>
-            <ul class="row list-unstyled mx-0">
-                {% for product in recommended_products %}
-                <li class="col-sm-4 col-md-3 col-lg-3">
-                    {% render_product product %}
-                </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-
     {% recently_viewed_products current_product=product %}
 
 </article><!-- End of product page -->
 {% endblock content %}
 
 {% block extrascripts %}
+
     {{ block.super }}
 {% endblock %}

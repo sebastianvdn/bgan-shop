@@ -4,54 +4,58 @@
 {% with all_images=product.get_all_images %}
     {# use length rather then count as the images get queried anyways #}
 
-    {% if all_images|length > 1 %}
+    {% if all_images|length > 0 %}
 
-        <div id="product_gallery" class="carousel slide" data-ride="carousel">
+    <div id="carousel1_indicator" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          {% for image in all_images %}
+            <li data-target="#carousel1_indicator" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.counter0 == 0 %}active{% endif %}"></li>
+          {% endfor %}
 
-            <div class="img-thumbnail mb-3">
-                <div class="carousel-inner">
-                {% for image in all_images %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
-                        <img src="{{ thumb.url }}" alt="{{ product.get_title }}" />
+        </ol>
+        <div class="carousel-inner">
+            {% for image in all_images %}
+                {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
+
+                    <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+                      <img class="d-block w-100" src="{{ thumb.url }}" alt="First slide"> 
                     </div>
-                {% endfor %}
-                </div>
-                <a class="carousel-control-prev" href="#product_gallery" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">{% trans "Previous" %}</span>
-                </a>
-                <a class="carousel-control-next" href="#product_gallery" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">{% trans "Next" %}</span>
-                </a>
-            </div>
-
-            <ol class="carousel-indicators img-thumbnail">
-                {% for image in all_images %}
-                    <li data-target="#product_gallery" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}">
-                        {% oscar_thumbnail image.original "65x55" crop="center" as thumb %}
-                        <img src="{{ thumb.url }}" alt="{{ product.get_title }}" />
-                    </li>
-                {% endfor %}
-            </ol>
+            {% endfor %}
         </div>
+        <a class="carousel-control-prev" href="#carousel1_indicator" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carousel1_indicator" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+    </div>
 
     {% else %}
 
         {# Only one image to show #}
-        <div id="product_gallery" class="carousel">
-            <div class="img-thumbnail">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                    {% with image=product.primary_image %}
-                        {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
-                        <img src="{{ thumb.url }}" alt="{{ product.get_title }}" />
-                    {% endwith %}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="carousel1_indicator" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+              <li data-target="#carousel1_indicator" data-slide-to="0" class="active"></li>
+            </ol>
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                {% with image=product.primary_image %}
+                {% oscar_thumbnail image.original "440x400" upscale=False as thumb %}
+                <img class="d-block w-100" src="{{ thumb.url }}" alt="First slide">
+                {% endwith %}
 
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carousel1_indicator" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel1_indicator" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
     {% endif %}
 {% endwith %}
