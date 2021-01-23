@@ -2,3 +2,12 @@
 # ------------------------------------------------------------------------------
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
+
+# Payments
+# 
+------------------------------------------------------------------------------
+STRIPE_PUBLIC_KEY=pk_test_51Hdc1XC5Gl0brdROpJIpJLRpfm57r0aP2AtKKoSTajBGTsLKuKK7NPlEwZ765Eur0IpoqKf3fWxooFB6Oq5ljwmU00cFRtbygd
+STRIPE_SECRET_KEY=sk_test_51Hdc1XC5Gl0brdROm51rTiiIC65YBIn7NN7Q61JponVYxZM7WiM0DKpcZlFNIQjtCjlYDBYIJzAEhNr2hOBR8UV900Pim6k9M6
+STRIPE_CURRENCY = "EUR"
+WEBHOOK_SECRET=whsec_379aSRwQw6UOu77IvnQkxlR03Z5FBDEE
+PAYPAL_RECEIVER_EMAIL=sb-oowcf2982381@business.bgan.be

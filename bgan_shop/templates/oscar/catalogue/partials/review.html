@@ -7,7 +7,7 @@
         <!-- <img src="../images/avatars/avatar1.jpg" class="img-xs icon rounded-circle"> -->
         <div class="text">
             <span class="date text-muted float-md-right">{{ review.date_created }} </span>  
-            <h6 class="mb-1">{{review.reviewer_name}}
+            <h6 class="mb-1">{{ review.reviewer_name}}
                 {% if review.user == user %}
                 {% blocktrans with review_date=review.date_created %}
                 (You)
@@ -15,7 +15,7 @@
                 {% endif %}
             </h6>
             <ul class="rating-stars">
-                <li style="width:80%" class="stars-active">
+                <li style="width:{% widthratio review.score 5 100 %}%" class="stars-active">
                     <img src="{% static '/img/icons/stars-active.svg' %}" alt="">
                 </li>
                 <li>

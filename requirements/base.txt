@@ -16,3 +16,4 @@ django-redis==4.12.1  # https://github.com/jazzband/django-redis
 django-oscar==2.1
 sorl-thumbnail==12.7.0
 pysolr==3.9.0 
+stripe==2.55.1
