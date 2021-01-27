@@ -35,14 +35,13 @@
         <div class="form-group clearfix">
             <div class="row">
                 <div class="col-sm-3 offset-sm-9">
-
                 </div>
             </div>
         </div>
+        <button id='place-order' class="btn btn-primary btn-lg float-right w-50 mb-3" data-loading-text="{% trans 'Submitting...' %}">{% trans "Place order" %}</button>
 
     </form>
 
-    <button id='place-order' class="btn btn-primary btn-lg float-right w-50 mb-3" data-loading-text="{% trans 'Submitting...' %}">{% trans "Place order" %}</button>
 
 
 {% endblock place_order %}
@@ -51,19 +50,75 @@
 <script type="text/javascript">
 // Create an instance of the Stripe object with your publishable API key
 var stripe = Stripe('{{STRIPE_PUBLIC_KEY}}');
-var checkoutButton = document.getElementById('place-order');
 
-checkoutButton.addEventListener('click', function() {
-    if ("{{order_total_incl_tax_cents}}" > 0) {
-        return stripe.redirectToCheckout({ sessionId: "{{request.session.session_id}}" });
-    } else {
-        document.getElementById('place_order_form').submit();
-    }
+var form = document.getElementById('place_order_form');
+form.addEventListener('submit', function(event) {
+  // We don't want to let default form submission happen here,
+  // which would refresh the page.
+  event.preventDefault();
+  stripePaymentMethodHandler()
+
 });
-const urlParams = new URLSearchParams(window.location.search);
-const completed = urlParams.get('completed');
-if (completed == "1") {
-    document.getElementById('place_order_form').submit();
+
+function stripePaymentMethodHandler() {
+    if (false) {
+        console.log("error")
+        // Show error in payment form
+    } else {
+        // Otherwise send paymentMethod.id to your server (see Step 4)
+        console.log("start payment")
+        console.log("{{request.session.payment_intent_id}}")
+        fetch('/checkout/stripe-pay/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            payment_intent_id: "{{request.session.payment_intent_id}}",
+        })
+        }).then(function(result) {
+        // Handle server response (see Step 4)
+        result.json().then(function(json) {
+            // Instead of doing the payment already redirect to next step and use the response.payment_intent_client_secret from the session
+            console.log(json)
+            handleServerResponse(json);
+        })
+        });
+    }
 }
+
+function handleServerResponse(response) {
+    console.log(response)
+    if (response.error) {
+        // Show error from server on payment form
+        console.log(response.error)
+    } else if (response.requires_action) {
+        // Use Stripe.js to handle required card action
+
+        stripe.handleCardAction(
+        response.payment_intent_client_secret
+        ).then(handleStripeJsResult);
+    } else {
+        // Show success message
+        console.log("success")
+
+    }
+}
+
+function handleStripeJsResult(result) {
+  if (result.error) {
+    // Show error in payment form
+    console.log(result.error)
+  } else {
+    // The card action has been handled
+    // The PaymentIntent can be confirmed again on the server
+    fetch('/checkout/stripe-pay/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payment_intent_id: result.paymentIntent.id })
+    }).then(function(confirmResult) {
+      return confirmResult.json();
+    }).then(handleServerResponse);
+  }
+}
+
 </script>
 {% endblock extrascripts %}
