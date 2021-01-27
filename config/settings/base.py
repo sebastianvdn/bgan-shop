@@ -73,7 +73,7 @@ THIRD_PARTY_APPS = [
 
     'oscar.config.Shop',
     'oscar.apps.analytics.apps.AnalyticsConfig',
-    'oscar.apps.checkout.apps.CheckoutConfig',
+    # 'oscar.apps.checkout.apps.CheckoutConfig',
     'oscar.apps.address.apps.AddressConfig',
     'oscar.apps.shipping.apps.ShippingConfig',
     'oscar.apps.catalogue.apps.CatalogueConfig',
@@ -112,6 +112,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "bgan_shop.users.apps.UsersConfig",
     # Your stuff: custom apps go here
+    "bgan_shop.checkout.apps.CheckoutConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -325,3 +326,6 @@ OSCAR_ORDER_STATUS_PIPELINE = {
 }
 OSCAR_DEFAULT_CURRENCY = "EUR"
 OSCAR_PRODUCTS_PER_PAGE = 20
+OSCAR_ALLOW_ANON_CHECKOUT = True
+OSCAR_SHOP_NAME = "Bgan"
+OSCAR_SHOP_TAGLINE = "Where it all vegan"

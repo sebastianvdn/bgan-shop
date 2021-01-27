@@ -6,6 +6,8 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from django.apps import apps
 
+from bgan_shop.checkout.hooks import stripe_webhook
+
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 
@@ -13,7 +15,8 @@ urlpatterns = [
     # Nonetheless, it's often useful for debugging.
 
     path('admin/', admin.site.urls),
-
+    # stripe payments webhook
+    path("checkout/stripe-webhook/", stripe_webhook, name="stripe_webhook"),
     path('', include(apps.get_app_config('oscar').urls[0])),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

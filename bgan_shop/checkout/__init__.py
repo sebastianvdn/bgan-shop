@@ -1,0 +1,5 @@
+default_app_config = 'bgan_shop.checkout.apps.CheckoutConfig'
+PAYMENT_EVENT_PURCHASE = 'Purchase'
+PAYMENT_METHOD_STRIPE = 'Stripe'
+STRIPE_EMAIL = 'stripeEmail'
+STRIPE_TOKEN = 'stripeToken'
